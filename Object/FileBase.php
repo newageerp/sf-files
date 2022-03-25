@@ -2,9 +2,10 @@
 namespace Newageerp\SfFiles\Object;
 
 use Doctrine\ORM\Mapping as ORM;
+use Newageerp\SfBaseEntity\Object\BaseEntity;
 use Newageerp\SfFiles\Interface\IFile;
 
-class FileBase implements IFile
+class FileBase extends BaseEntity implements IFile
 {
     /**
      * @ORM\Column(type="string")

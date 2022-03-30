@@ -1,6 +1,6 @@
 <?php
 
-namespace Newageerp\SfFiles\Controller\Files;
+namespace Newageerp\SfFiles\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Newageerp\SfBaseEntity\Controller\OaBaseController;

@@ -62,4 +62,6 @@ interface IFile
      * @param bool $appproved
      */
     public function setAppproved(bool $appproved): void;
+
+    public function getId(): ?int;
 }

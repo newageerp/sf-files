@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Newageerp\SfBaseEntity\Object\BaseEntity;
 use Newageerp\SfFiles\Interface\IFile;
 
-class FileBase extends BaseEntity implements IFile
+abstract class FileBase extends BaseEntity implements IFile
 {
     /**
      * @ORM\Column(type="string")

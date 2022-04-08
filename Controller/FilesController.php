@@ -8,6 +8,7 @@ use Newageerp\SfFiles\Object\FileBase;
 use Newageerp\SfFiles\Service\FileService;
 use Newageerp\SfSocket\Event\SocketSendPoolEvent;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\HeaderUtils;
@@ -25,9 +26,9 @@ class FilesController extends OaBaseController
 
     protected FileService $fileService;
 
-    public function __construct(FileService $fileService, EntityManagerInterface $em)
+    public function __construct(FileService $fileService, EntityManagerInterface $em, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($em);
+        parent::__construct($em, $eventDispatcher);
         $this->fileService = $fileService;
     }
 
@@ -85,8 +86,7 @@ class FilesController extends OaBaseController
             $entityManager->flush();
 
             $event = new SocketSendPoolEvent();
-            $dispatcher = new EventDispatcher();
-            $dispatcher->dispatch($event, SocketSendPoolEvent::NAME);
+            $this->eventDispatcher->dispatch($event, SocketSendPoolEvent::NAME);
 
             return $this->json(['success' => 1, 'data' => $output]);
         } catch (\Exception $e) {

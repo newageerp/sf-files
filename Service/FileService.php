@@ -1,4 +1,5 @@
 <?php
+
 namespace Newageerp\SfFiles\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,6 +21,20 @@ class FileService
         $this->publicStorage = $_ENV['NAE_SFFILES_STORAGE_PUBLIC_DIR'];
 
         $this->entityManager = $entityManager;
+    }
+
+    public function cacheFileToPublicFolder($file) : string
+    {
+        $fileUrl = $_ENV['FRONT_URL'] . '/app/nae-core/files/viewById?id=' . $file->getId();
+        $filePath = $this->publicStorage.'/cache/' . $file->getFileName();
+
+        if (!file_exists($filePath)) {
+            file_put_contents(
+                $filePath,
+                file_get_contents($fileUrl)
+            );
+        }
+        return $_ENV['FRONT_URL'].'/public/cache/' . $file->getFileName();
     }
 
     public function getPublicTmpDir()

@@ -178,6 +178,37 @@ class FilesController extends OaBaseController
     }
 
     /**
+     * @Route (path="/viewById", methods={"GET"})
+     */
+    public function viewById(Request $request)
+    {
+        try {
+            $fileId = $request->get('id');
+            $fileRepo = $this->getEm()->getRepository($this->className);
+            $file = $fileRepo->find($fileId);
+
+            $path = $this->fileService->getLocalStorage() . '/' . ltrim($file->getPath(), '/');
+            $response = new BinaryFileResponse($path);
+
+            $filenameFallback = preg_replace(
+                '#^.*\.#',
+                md5($file->getFileName()) . '.',
+                $file['name']
+            );
+
+            $disposition = HeaderUtils::makeDisposition(
+                HeaderUtils::DISPOSITION_INLINE,
+                $file->getFileName(),
+                $filenameFallback
+            );
+            $response->headers->set('Content-Disposition', $disposition);
+            return $response;
+        } catch (\Exception $exception) {
+            return $this->json(['success' => -1, 'e' => $exception->getMessage()]);
+        }
+    }
+
+    /**
      * @Route (path="/view", methods={"GET"})
      */
     public function view(Request $request)

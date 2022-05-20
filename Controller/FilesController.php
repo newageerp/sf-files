@@ -194,13 +194,13 @@ class FilesController extends OaBaseController
 
             $filenameFallback = preg_replace(
                 '#^.*\.#',
-                md5($file->getFileName()) . '.',
-                $file->getFileName()
+                md5($file->getOrgFileName()) . '.',
+                $file->getOrgFileName()
             );
 
             $disposition = HeaderUtils::makeDisposition(
                 $download ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE,
-                $file->getFileName(),
+                $file->getOrgFileName(),
                 $filenameFallback
             );
             $response->headers->set('Content-Disposition', $disposition);

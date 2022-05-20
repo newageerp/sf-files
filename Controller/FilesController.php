@@ -184,6 +184,8 @@ class FilesController extends OaBaseController
     {
         try {
             $fileId = $request->get('id');
+            $download = $request->get('download') === 'true';
+
             $fileRepo = $this->getEm()->getRepository($this->className);
             $file = $fileRepo->find($fileId);
 
@@ -193,11 +195,11 @@ class FilesController extends OaBaseController
             $filenameFallback = preg_replace(
                 '#^.*\.#',
                 md5($file->getFileName()) . '.',
-                $file['name']
+                $file->getFileName()
             );
 
             $disposition = HeaderUtils::makeDisposition(
-                HeaderUtils::DISPOSITION_INLINE,
+                $download ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE,
                 $file->getFileName(),
                 $filenameFallback
             );

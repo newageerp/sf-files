@@ -319,7 +319,7 @@ class FilesController extends OaBaseController
                 $orm->setAppproved(!$orm->isAppproved());
                 $entityManager->flush();
 
-                return $this->json(['success' => 1]);
+                return $this->json(['success' => 1, 'result' => $orm->isAppproved()]);
             }
 
             return $this->json(['success' => 0]);

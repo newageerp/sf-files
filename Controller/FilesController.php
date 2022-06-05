@@ -269,6 +269,35 @@ class FilesController extends OaBaseController
         }
     }
 
+    /**
+     * @Route (path="/removeById", methods={"POST"})
+     */
+    public function removeById(Request $request, EntityManagerInterface $entityManager)
+    {
+        try {
+            $request = $this->transformJsonBody($request);
+
+            if (!($user = $this->findUser($request))) {
+                throw new \Exception('Invalid user');
+            }
+
+            $id = $request->get('id');
+
+            $fileRepository = $entityManager->getRepository($this->className);
+
+            $orm = $fileRepository->find($id);
+            if ($orm) {
+                $orm->setDeleted(true);
+                $entityManager->persist($orm);
+                $entityManager->flush();
+            }
+
+            return $this->json(['success' => 1]);
+        } catch (\Exception $exception) {
+            return $this->json(['success' => -1, 'e' => $exception->getMessage()]);
+        }
+    }
+
 
     /**
      * @Route ("/list", methods={"POST"})
@@ -330,6 +359,7 @@ class FilesController extends OaBaseController
             $request = $this->transformJsonBody($request);
 
             $folders = $request->get('folders');
+            $allowDeleted = $request->get('allowDeleted');
 
             $data = [];
             foreach ($folders as $folder) {
@@ -343,6 +373,10 @@ class FilesController extends OaBaseController
                  * @var FileBase $file
                  */
                 foreach ($files as $file) {
+                    if ($file->isDeleted() && !$allowDeleted) {
+                        continue;
+                    }
+
                     $ext = explode(".", $file->getOrgFileName());
                     $ext = $ext[count($ext) - 1];
 
@@ -352,6 +386,7 @@ class FilesController extends OaBaseController
                         'extension' => $ext,
                         'deleted' => $file->isDeleted(),
                         'appproved' => $file->isAppproved(),
+                        'approved' => $file->isAppproved(),
                         'id' => $file->getId()
                     ];
                 }

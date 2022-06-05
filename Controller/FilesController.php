@@ -288,11 +288,11 @@ class FilesController extends OaBaseController
             $orm = $fileRepository->find($id);
             if ($orm) {
                 $orm->setDeleted(true);
-                $entityManager->persist($orm);
                 $entityManager->flush();
+                return $this->json(['success' => 1]);
             }
 
-            return $this->json(['success' => 1]);
+            return $this->json(['success' => 0]);
         } catch (\Exception $exception) {
             return $this->json(['success' => -1, 'e' => $exception->getMessage()]);
         }
@@ -317,11 +317,12 @@ class FilesController extends OaBaseController
             $orm = $fileRepository->find($id);
             if ($orm) {
                 $orm->setAppproved(!$orm->isAppproved());
-                $entityManager->persist($orm);
                 $entityManager->flush();
+
+                return $this->json(['success' => 1]);
             }
 
-            return $this->json(['success' => 1]);
+            return $this->json(['success' => 0]);
         } catch (\Exception $exception) {
             return $this->json(['success' => -1, 'e' => $exception->getMessage()]);
         }

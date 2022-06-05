@@ -298,6 +298,35 @@ class FilesController extends OaBaseController
         }
     }
 
+    /**
+     * @Route (path="/toggleApproved", methods={"POST"})
+     */
+    public function toggleApproved(Request $request, EntityManagerInterface $entityManager)
+    {
+        try {
+            $request = $this->transformJsonBody($request);
+
+            if (!($user = $this->findUser($request))) {
+                throw new \Exception('Invalid user');
+            }
+
+            $id = $request->get('id');
+
+            $fileRepository = $entityManager->getRepository($this->className);
+
+            $orm = $fileRepository->find($id);
+            if ($orm) {
+                $orm->setAppproved(!$orm->isAppproved());
+                $entityManager->persist($orm);
+                $entityManager->flush();
+            }
+
+            return $this->json(['success' => 1]);
+        } catch (\Exception $exception) {
+            return $this->json(['success' => -1, 'e' => $exception->getMessage()]);
+        }
+    }
+
 
     /**
      * @Route ("/list", methods={"POST"})

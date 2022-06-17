@@ -55,6 +55,7 @@ class FilesController extends OaBaseController
             $path = $this->fileService->getLocalStorage() . '/' . ltrim($folder, '/');
 
             $output = [];
+            $links = [];
 
             /**
              * @var UploadedFile $file
@@ -82,13 +83,19 @@ class FilesController extends OaBaseController
                 $orm->setOrgFileName(mb_strtolower($file->getClientOriginalName()));
                 $orm->setPath(ltrim($localPath, '/'));
                 $entityManager->persist($orm);
+
+
+                $links[] = [
+                    'name' => mb_strtolower($file->getClientOriginalName()),
+                    'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/files/viewById?id=' . $orm->get('id') . '&download=true&token=' . $request->get('token')
+                ];
             }
             $entityManager->flush();
 
             $event = new SocketSendPoolEvent();
             $this->eventDispatcher->dispatch($event, SocketSendPoolEvent::NAME);
 
-            return $this->json(['success' => 1, 'data' => $output]);
+            return $this->json(['success' => 1, 'data' => $output, 'links' => $links]);
         } catch (\Exception $e) {
             return $this->json(['success' => 0, 'e' => $e->getMessage(), 'f' => $e->getFile(), 'l' => $e->getLine()]);
         }

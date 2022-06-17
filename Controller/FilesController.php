@@ -83,14 +83,14 @@ class FilesController extends OaBaseController
                 $orm->setOrgFileName(mb_strtolower($file->getClientOriginalName()));
                 $orm->setPath(ltrim($localPath, '/'));
                 $entityManager->persist($orm);
-
+                $entityManager->flush();
 
                 $links[] = [
                     'name' => mb_strtolower($file->getClientOriginalName()),
                     'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/files/viewById?id=' . $orm->getId() . '&download=true&token=' . $request->get('token')
                 ];
             }
-            $entityManager->flush();
+
 
             $event = new SocketSendPoolEvent();
             $this->eventDispatcher->dispatch($event, SocketSendPoolEvent::NAME);

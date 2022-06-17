@@ -47,6 +47,8 @@ class FilesController extends OaBaseController
                 throw new \Exception('Invalid user');
             }
 
+            $token = $request->get('token') ? $request->get('token') : $request->headers->get('Authorization');
+
             $files = $request->files;
 
             $folder = $request->get('folder') ?: 'uploads';
@@ -87,7 +89,7 @@ class FilesController extends OaBaseController
 
                 $links[] = [
                     'name' => mb_strtolower($file->getClientOriginalName()),
-                    'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/files/viewById?id=' . $orm->getId() . '&download=true&token=' . $request->get('token')
+                    'link' => $_ENV['NAE_SFS_FRONT_URL'] . '/app/nae-core/files/viewById?id=' . $orm->getId() . '&download=true&token=' . $token
                 ];
             }
 

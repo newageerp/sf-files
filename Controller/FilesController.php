@@ -204,6 +204,10 @@ class FilesController extends OaBaseController
                 $file->getOrgFileName()
             );
 
+            if (mb_strpos($file->getOrgFileName(), '.pdf') !== false) {
+                $response->headers->set('Content-type', 'application/pdf');
+            }
+
             $disposition = HeaderUtils::makeDisposition(
                 $download ? HeaderUtils::DISPOSITION_ATTACHMENT : HeaderUtils::DISPOSITION_INLINE,
                 $file->getOrgFileName(),
@@ -236,6 +240,10 @@ class FilesController extends OaBaseController
                 md5($file['name']) . '.',
                 $file['name']
             );
+
+            if (mb_strpos($file['name'], '.pdf') !== false) {
+                $response->headers->set('Content-type', 'application/pdf');
+            }
 
             $disposition = HeaderUtils::makeDisposition(
                 HeaderUtils::DISPOSITION_INLINE,
